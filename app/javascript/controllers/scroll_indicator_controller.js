@@ -5,15 +5,19 @@ export default class extends Controller {
   static targets = ["progressBar"];
 
   connect() {
-    if (!window.onscroll) {
-      const debouncedScroll = this.debounce(() => {
-        this.animateScroll();
-      }, 10);
+    this._throttledScroll = this.throttle(() => {
+      this.animateScroll();
+    }, 10);
 
-      window.onscroll = () => {
-        debouncedScroll();
-      };
-    }
+    window.addEventListener("scroll", () => {
+      this._throttledScroll();
+    });
+  }
+
+  disconnect() {
+    window.removeEventListener("scroll", () => {
+      this._throttledScroll();
+    });
   }
 
   // https://www.w3schools.com/howto/howto_js_scroll_indicator.asp
@@ -29,13 +33,16 @@ export default class extends Controller {
   }
 
   // https://blog.webdevsimplified.com/2022-03/debounce-vs-throttle/
-  debounce(callback, delay = 250) {
-    let timeout;
+  throttle(callback, delay = 250) {
+    let shouldWait = false;
 
     return (...args) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        callback(...args);
+      if (shouldWait) return;
+
+      callback(...args);
+      shouldWait = true;
+      setTimeout(() => {
+        shouldWait = false;
       }, delay);
     };
   }

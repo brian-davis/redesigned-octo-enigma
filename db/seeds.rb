@@ -1,5 +1,5 @@
 Post.delete_all
-10.times do
+100.times do
   title = Faker::Lorem.sentence( word_count: 6 )
   body = 100.times.map {
     "<p>#{Faker::Lorem.paragraph( sentence_count: 30 )}</p>"
