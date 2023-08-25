@@ -1,5 +1,11 @@
 <p style="color: green"><%= notice %></p>
 
+<% content_for(:scroll_indicator) do %>
+  <% cache("__scroll_indicator", expires_in: 1.day) do %>
+    <%= render("components/scroll_indicator") %>
+  <% end %>
+<% end %>
+
 <%= render @post %>
 
 <div>
